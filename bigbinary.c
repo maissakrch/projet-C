@@ -329,3 +329,128 @@ BigBinary pgcdBinaire(const BigBinary A, const BigBinary B) {
     normalizeBigBinary(&G);
     return G;
 }
+
+// ===== Modulo (A mod B), B > 0, algorithme par alignement & soustractions =====
+BigBinary BigBinary_mod(const BigBinary A, const BigBinary B) {
+    // Gestion des cas limites
+    if (estZero(B)) {
+        fprintf(stderr, "Erreur: modulo par zero\n");
+        return initBigBinary();
+    }
+    BigBinary R = copieBigBinary(A);   // reste courant
+    // Normalise au cas où
+    // (normalizeBigBinary est static ici, mais déjà appelée par vos constructeurs/ops)
+    // On va soustraire B<<k quand possible, de k = (|A|-|B|) à 0
+    if (Inferieur(R, B)) return R;     // déjà plus petit que B
+
+    int maxShift = R.Taille - B.Taille;
+    for (int k = maxShift; k >= 0; --k) {
+        BigBinary Bk = decaleGauche(B, k);
+        if (!Inferieur(R, Bk)) {                 // si R >= B<<k
+            BigBinary tmp = soustractionBigBinary(R, Bk);
+            libereBigBinary(&R);
+            R = tmp;
+        }
+        libereBigBinary(&Bk);
+        if (estZero(R)) break;
+    }
+    return R; // Normalisé par soustractionBigBinary
+}
+
+// ===== Multiplication modulaire par décalages/ajouts (sans multiplier général) =====
+static BigBinary add_mod(const BigBinary X, const BigBinary Y, const BigBinary mod) {
+    BigBinary s = additionBigBinary(X, Y);
+    BigBinary r = BigBinary_mod(s, mod);
+    libereBigBinary(&s);
+    return r;
+}
+static BigBinary lshift1_mod(const BigBinary X, const BigBinary mod) {
+    BigBinary d = decaleGauche(X, 1);
+    BigBinary r = BigBinary_mod(d, mod);
+    libereBigBinary(&d);
+    return r;
+}
+
+// Z = (X * Y) mod mod  (schoolbook via décalages, Y traité bit-à-bit)
+static BigBinary BigBinary_mul_mod(const BigBinary X, const BigBinary Y, const BigBinary mod) {
+    BigBinary a = BigBinary_mod(X, mod);
+    BigBinary b = copieBigBinary(Y);
+    BigBinary res = initBigBinary(); // 0
+
+    while (!estZero(b)) {
+        // si b est impair → res = (res + a) mod mod
+        if (!estPair(b)) {
+            BigBinary tmp = add_mod(res, a, mod);
+            libereBigBinary(&res);
+            res = tmp;
+        }
+        // a = (a << 1) mod mod
+        BigBinary a2 = lshift1_mod(a, mod);
+        libereBigBinary(&a);
+        a = a2;
+
+        // b >>= 1
+        BigBinary b2 = decaleDroite(b, 1);
+        libereBigBinary(&b);
+        b = b2;
+    }
+    libereBigBinary(&a);
+    libereBigBinary(&b);
+    return res;
+}
+
+// Convertit un BigBinary (≤64 bits) vers uint64_t ; renvoie 1 si ok, 0 sinon
+static int to_u64(const BigBinary E, unsigned long long *out) {
+    if (E.Taille > 64) return 0;
+    unsigned long long v = 0ULL;
+    for (int i = 0; i < E.Taille; ++i) {
+        v = (v << 1) | (unsigned long long)(E.Tdigits[i] ? 1 : 0);
+    }
+    *out = v;
+    return 1;
+}
+
+// ===== Exponentiation modulaire rapide (square-and-multiply) =====
+BigBinary BigBinary_expMod(const BigBinary M, const BigBinary exp, const BigBinary mod) {
+    if (estZero(mod)) {
+        fprintf(stderr, "Erreur: mod nul dans expMod\n");
+        return initBigBinary();
+    }
+    // Si mod == 1 → résultat = 0
+    BigBinary one = initBigBinaryFromString("1");
+    BigBinary mod_eq_1 = BigBinary_mod(one, mod); // juste pour tester mod==1 proprement
+    if (estZero(mod_eq_1)) { // mod == 1
+        libereBigBinary(&one);
+        return initBigBinary();
+    }
+    libereBigBinary(&mod_eq_1);
+
+    unsigned long long e = 0ULL;
+    if (!to_u64(exp, &e)) {
+        fprintf(stderr, "Erreur: exposant > 64 bits\n");
+        libereBigBinary(&one);
+        return initBigBinary();
+    }
+
+    BigBinary base = BigBinary_mod(M, mod);
+    BigBinary result = initBigBinaryFromString("1");
+
+    while (e > 0ULL) {
+        if (e & 1ULL) {
+            BigBinary tmp = BigBinary_mul_mod(result, base, mod);
+            libereBigBinary(&result);
+            result = tmp;
+        }
+        e >>= 1ULL;
+        if (e > 0ULL) { // inutile de faire le dernier carré si on sort
+            BigBinary sq = BigBinary_mul_mod(base, base, mod);
+            libereBigBinary(&base);
+            base = sq;
+        }
+    }
+
+    libereBigBinary(&one);
+    libereBigBinary(&base);
+    return result;
+}
+

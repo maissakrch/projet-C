@@ -54,4 +54,9 @@ BigBinary soustractionAbsolue(const BigBinary A, const BigBinary B);  // Valeur 
 // === PGCD binaire (algorithme de Stein) ===
 BigBinary pgcdBinaire(const BigBinary A, const BigBinary B);           // Calcule PGCD(A,B) en binaire
 
+// === Phase 2 (suite) : modulo + exp modulaire ===
+BigBinary BigBinary_mod(const BigBinary A, const BigBinary B);                 // A mod B (B>0)
+BigBinary BigBinary_expMod(const BigBinary M, const BigBinary exp, const BigBinary mod); // exp <= 64 bits
+
+
 #endif // BIGBINARY_H
