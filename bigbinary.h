@@ -5,22 +5,53 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* ===========================================================
+ *  Structure principale
+ * =========================================================== */
+
 typedef struct {
-    int *Tdigits;  // tableau de bits (0 ou 1)
-    int Taille;    // taille du tableau
-    int Signe;     // 0 = positif, 1 = négatif
+    int *Tdigits;  // Tableau de bits (0 ou 1), MSB-first
+    int Taille;    // Taille du tableau
+    int Signe;     // 0 = positif, 1 = négatif (Phase 1 = non signé)
 } BigBinary;
 
-// 🔹 Fonctions demandées
-BigBinary initBigBinary();                               // initialisation vide
-BigBinary initBigBinaryFromString(const char *str);      // depuis une chaîne binaire
-void afficheBigBinary(const BigBinary A);                // affichage
-void libereBigBinary(BigBinary *A);                      // libération mémoire
+/* ===========================================================
+ *  Phase 1 — Fonctions de base
+ * =========================================================== */
 
-int Egal(const BigBinary A, const BigBinary B);          // égalité
-int Inferieur(const BigBinary A, const BigBinary B);     // comparaison
+// 🔹 Initialisation
+BigBinary initBigBinary();                               // Initialise un BigBinary vide (0)
+BigBinary initBigBinaryFromString(const char *str);      // Initialise depuis une chaîne binaire
 
-BigBinary additionBigBinary(const BigBinary A, const BigBinary B); // addition
-BigBinary soustractionBigBinary(const BigBinary A, const BigBinary B); // soustraction (A ≥ B)
+// 🔹 Affichage et libération
+void afficheBigBinary(const BigBinary A);                // Affiche le BigBinary sur stdout
+void libereBigBinary(BigBinary *A);                      // Libère la mémoire allouée
 
-#endif
+// 🔹 Comparaisons
+int Egal(const BigBinary A, const BigBinary B);          // Test d’égalité
+int Inferieur(const BigBinary A, const BigBinary B);     // Test si A < B (non signé)
+
+// 🔹 Opérations de base
+BigBinary additionBigBinary(const BigBinary A, const BigBinary B);        // Addition binaire
+BigBinary soustractionBigBinary(const BigBinary A, const BigBinary B);    // Soustraction (A ≥ B)
+
+/* ===========================================================
+ *  Phase 2 — Extensions : Helpers, décalages, PGCD
+ * =========================================================== */
+
+// === Helpers ===
+int estZero(const BigBinary A);                          // Retourne 1 si A == 0
+int estPair(const BigBinary A);                          // Retourne 1 si A est pair (dernier bit = 0)
+BigBinary copieBigBinary(const BigBinary A);             // Copie profonde d’un BigBinary
+
+// === Décalages ===
+BigBinary decaleGauche(const BigBinary A, int n);        // Décalage gauche (×2^n)
+BigBinary decaleDroite(const BigBinary A, int n);        // Décalage droite (÷2^n)
+
+// === Opérations étendues ===
+BigBinary soustractionAbsolue(const BigBinary A, const BigBinary B);  // Valeur absolue de (A - B)
+
+// === PGCD binaire (algorithme de Stein) ===
+BigBinary pgcdBinaire(const BigBinary A, const BigBinary B);           // Calcule PGCD(A,B) en binaire
+
+#endif // BIGBINARY_H
