@@ -81,12 +81,12 @@ int main(void) {
     BigBinary expRes1 = BigBinary_expMod(base1, exp1, mod1);
     show("5^13 mod 23", expRes1); // attendu : 10101 (21)
 
-    // 7^20 mod 13 = 9
+    // 7^20 mod 13 = 3
     BigBinary base2 = initBigBinaryFromString("111");     // 7
     BigBinary exp2  = initBigBinaryFromString("10100");   // 20
     BigBinary mod2  = initBigBinaryFromString("1101");    // 13
     BigBinary expRes2 = BigBinary_expMod(base2, exp2, mod2);
-    show("7^20 mod 13", expRes2); // attendu : 1001 (9)
+    show("7^20 mod 13", expRes2); // attendu : 1001 (3)
 
     /* =====================================================
        LIBÉRATION DE MÉMOIRE

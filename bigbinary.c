@@ -280,12 +280,10 @@ BigBinary pgcdBinaire(const BigBinary A, const BigBinary B) {
     BigBinary Y = copieBigBinary(B); normalizeBigBinary(&Y);
 
     if (estZero(X)) {
-        // retour Y, libère X
-        // (Y déjà normalisé)
-        return Y; // appelant devra libérer le retour
+        libereBigBinary(&X); return Y; // appelant devra libérer le retour
     }
     if (estZero(Y)) {
-        return X;
+        libereBigBinary(&Y); return X;
     }
 
     // Facteurs de 2 communs
@@ -420,6 +418,7 @@ BigBinary BigBinary_expMod(const BigBinary M, const BigBinary exp, const BigBina
     BigBinary one = initBigBinaryFromString("1");
     BigBinary mod_eq_1 = BigBinary_mod(one, mod); // juste pour tester mod==1 proprement
     if (estZero(mod_eq_1)) { // mod == 1
+        libereBigBinary(&mod_eq_1);
         libereBigBinary(&one);
         return initBigBinary();
     }
