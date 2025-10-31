@@ -28,7 +28,10 @@ static void normalizeBigBinary(BigBinary *A) {
 
     // CAS 1 : Structure vide ou invalide → transformer en zéro canonique
     if (A->Tdigits == NULL || A->Taille <= 0) {
+        // Libère (par sécurité) l'ancien tableau, même si NULL
         free(A->Tdigits);
+
+        // On réalloue un seul entier = 0
         A->Tdigits = (int*)malloc(sizeof(int));
         A->Tdigits[0] = 0;
         A->Taille = 1;
@@ -39,10 +42,12 @@ static void normalizeBigBinary(BigBinary *A) {
     // CAS 2 : Trouver le premier bit non nul (en partant du MSB/gauche)
     // On cherche où commence vraiment le nombre
     int i = 0;
-    while (i < A->Taille - 1 && A->Tdigits[i] == 0) i++;
+    while (i < A->Taille - 1 && A->Tdigits[i] == 0)
+        i++;
 
     // CAS 3 : Si tous les bits sont à 0 → zéro canonique
     if (i == A->Taille - 1 && A->Tdigits[i] == 0) {
+        // On libère et on force la représentation canonique
         free(A->Tdigits);
         A->Tdigits = (int*)malloc(sizeof(int));
         A->Tdigits[0] = 0;
@@ -62,6 +67,8 @@ static void normalizeBigBinary(BigBinary *A) {
 
         // Libérer l'ancien tableau et utiliser le nouveau
         free(A->Tdigits);
+
+        // met à jour la structure
         A->Tdigits = nd;
         A->Taille = newLen;
     }
@@ -313,6 +320,8 @@ BigBinary additionBigBinary(const BigBinary A, const BigBinary B) {
 
     // Créer le résultat (taille max + 1 pour la retenue finale)
     BigBinary R;
+
+    // On ajoute 1 bit pour stocker une éventuelle retenue finale
     R.Taille  = n + 1;
     R.Signe   = 0;  // Non signé en Phase 1
     R.Tdigits = (int*)calloc(R.Taille, sizeof(int));  // Initialise à 0
@@ -344,6 +353,10 @@ BigBinary additionBigBinary(const BigBinary A, const BigBinary B) {
     normalizeBigBinary(&R);
     return R;
 }
+
+/* ===========================================================
+ *  Soustraction binaire
+ * =========================================================== */
 
 /**
  * soustractionBigBinary - Soustraction A - B
@@ -381,6 +394,8 @@ BigBinary soustractionBigBinary(const BigBinary A, const BigBinary B) {
 
     // Créer le résultat (même taille que A)
     BigBinary R;
+
+    // Le résultat ne peut pas être plus long que A
     R.Taille  = A.Taille;
     R.Signe   = 0;  // Non signé en Phase 1
     R.Tdigits = (int*)calloc(R.Taille, sizeof(int));  // Initialise à 0
@@ -471,6 +486,7 @@ int estPair(const BigBinary A) {
  */
 BigBinary copieBigBinary(const BigBinary A) {
     BigBinary C;
+
     C.Taille  = A.Taille;
     C.Signe   = A.Signe;
 
@@ -507,8 +523,12 @@ BigBinary decaleGauche(const BigBinary A, int n) {
 
     // Créer le résultat (taille augmentée de n)
     BigBinary R;
+
+    // nouvelle taille = ancienne + n
     R.Taille  = A.Taille + n;
     R.Signe   = A.Signe;
+
+    // allocation
     R.Tdigits = (int*)malloc(R.Taille * sizeof(int));
 
     // Copier A au début (MSB)
@@ -517,6 +537,7 @@ BigBinary decaleGauche(const BigBinary A, int n) {
     // Ajouter n zéros à la fin (LSB)
     memset(R.Tdigits + A.Taille, 0, n * sizeof(int));
 
+    // nettoie
     normalizeBigBinary(&R);
     return R;
 }
@@ -552,11 +573,14 @@ BigBinary decaleDroite(const BigBinary A, int n) {
     BigBinary R;
     R.Taille  = A.Taille - n;
     R.Signe   = A.Signe;
+
+    // On alloue le tableau plus petit
     R.Tdigits = (int*)malloc(R.Taille * sizeof(int));
 
     // Copier uniquement la partie MSB (on supprime les n derniers bits)
     memcpy(R.Tdigits, A.Tdigits, R.Taille * sizeof(int));
 
+    // On normalise
     normalizeBigBinary(&R);
     return R;
 }
@@ -574,6 +598,7 @@ BigBinary decaleDroite(const BigBinary A, int n) {
  * @return : |A - B| (toujours positif)
  */
 BigBinary soustractionAbsolue(const BigBinary A, const BigBinary B) {
+    // Si A < B → on retourne (B - A)
     if (Inferieur(A, B)) {
         return soustractionBigBinary(B, A);  // B - A
     } else {
@@ -703,7 +728,6 @@ BigBinary pgcdBinaire(const BigBinary A, const BigBinary B) {
         }
 
         // 6b. S'assurer que X <= Y (échanger si nécessaire)
-        // Cette logique complexe vérifie et échange X/Y pour avoir X <= Y
         if (Inferieur(Y, X) == 0 && Egal(Y, X) == 0) {
             // Y >= X et Y != X → Y > X
             if (Inferieur(X, Y) == 0) {
@@ -727,9 +751,12 @@ BigBinary pgcdBinaire(const BigBinary A, const BigBinary B) {
 
     // ÉTAPE 7 : Réappliquer les facteurs de 2 extraits (multiplier par 2^k)
     BigBinary G = lshiftK(X, k);
-    libereBigBinary(&X);
-    libereBigBinary(&Y);  // Y == 0 à ce stade
 
+    // On libère X et Y (Y == 0)
+    libereBigBinary(&X);
+    libereBigBinary(&Y);
+
+    // Nettoyage
     normalizeBigBinary(&G);
     return G;
 }
@@ -788,6 +815,7 @@ BigBinary BigBinary_mod(const BigBinary A, const BigBinary B) {
             R = tmp;
         }
 
+        // Libère B<<k
         libereBigBinary(&Bk);
 
         // Optimisation : si R = 0, on peut arrêter
@@ -807,8 +835,13 @@ BigBinary BigBinary_mod(const BigBinary A, const BigBinary B) {
  * @return : (X + Y) mod mod
  */
 static BigBinary add_mod(const BigBinary X, const BigBinary Y, const BigBinary mod) {
-    BigBinary s = additionBigBinary(X, Y);  // X + Y
-    BigBinary r = BigBinary_mod(s, mod);    // (X + Y) mod mod
+    // Addition binaire X + Y
+    BigBinary s = additionBigBinary(X, Y);
+
+    // On réduit modulo mod
+    BigBinary r = BigBinary_mod(s, mod);
+
+    // Libère la somme intermédiaire
     libereBigBinary(&s);
     return r;
 }
@@ -823,9 +856,15 @@ static BigBinary add_mod(const BigBinary X, const BigBinary Y, const BigBinary m
  * @return : (X × 2) mod mod
  */
 static BigBinary lshift1_mod(const BigBinary X, const BigBinary mod) {
-    BigBinary d = decaleGauche(X, 1);       // X × 2
-    BigBinary r = BigBinary_mod(d, mod);    // (X × 2) mod mod
+    // Décalage gauche → multiplie par 2
+    BigBinary d = decaleGauche(X, 1);
+
+    // Réduction modulo mod
+    BigBinary r = BigBinary_mod(d, mod);
+
+    // On libère le résultat du décalage non réduit
     libereBigBinary(&d);
+
     return r;
 }
 
@@ -868,6 +907,8 @@ static BigBinary BigBinary_mul_mod(const BigBinary X, const BigBinary Y, const B
         if (!estPair(b)) {
             // res = (res + a) mod mod
             BigBinary tmp = add_mod(res, a, mod);
+
+            // remplace res = tmp
             libereBigBinary(&res);
             res = tmp;
         }
@@ -883,8 +924,10 @@ static BigBinary BigBinary_mul_mod(const BigBinary X, const BigBinary Y, const B
         b = b2;
     }
 
+    // Nettoyage
     libereBigBinary(&a);
     libereBigBinary(&b);
+
     return res;
 }
 
@@ -907,7 +950,10 @@ static int to_u64(const BigBinary E, unsigned long long *out) {
 
     // Construire le nombre bit par bit
     for (int i = 0; i < E.Taille; ++i) {
-        v = (v << 1) | (unsigned long long)(E.Tdigits[i] ? 1 : 0);
+        // on décale v pour faire de la place
+        v = (v << 1)
+            // puis on ajoute le bit actuel
+          | (unsigned long long)(E.Tdigits[i] ? 1 : 0);
     }
 
     *out = v;
