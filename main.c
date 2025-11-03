@@ -251,10 +251,7 @@ int main(void) {
     // 79792266297612001 ÷ 13 = 6137866638277846 reste 3
     // Donc 7^20 mod 13 = 3 = "11" en binaire
     // 
-    // NOTE : Sans l'algorithme optimisé, ce calcul serait impossible
-    //        à faire efficacement (trop de multiplications).
-    //        Avec "square-and-multiply", on fait ~20 opérations
-    //        au lieu de 20 millions !
+
     BigBinary base2 = initBigBinaryFromString("111");     // 7
     BigBinary exp2  = initBigBinaryFromString("10100");   // 20
     BigBinary mod2  = initBigBinaryFromString("1101");    // 13
@@ -320,9 +317,8 @@ int main(void) {
      * ========================================================================
      * FIN DU PROGRAMME
      * ========================================================================
-     * 
-     * Si tous les tests passent correctement, vous devriez voir :
-     * 
+     *
+     *
      * PHASE 1 :
      *   - A = 10110, B = 1101
      *   - A + B = 100011 (35)
@@ -343,10 +339,7 @@ int main(void) {
      *   - 48 mod 18 = 1100 (12)
      *   - 5^13 mod 23 = 10101 (21)
      *   - 7^20 mod 13 = 11 (3)
-     * 
-     * Ces résultats valident le bon fonctionnement de la bibliothèque
-     * BigBinary pour des applications en cryptographie et calcul numérique.
+     *
      */
-    printf("\n===== ✅ Phase 2 validée avec succès =====\n");
     return 0;
 }

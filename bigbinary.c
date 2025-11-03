@@ -3,10 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* ===========================================================
- *  HELPERS INTERNES (Fonctions utilitaires privées)
- * =========================================================== */
-
 /**
  * normalizeBigBinary - Normalise un nombre binaire
  *
@@ -17,8 +13,6 @@
  * EXEMPLE : "00001101" devient "1101"
  *           "00000000" devient "0"
  *
- * FORMAT : MSB-first signifie que le bit le plus significatif est en premier
- *          Exemple : [1,0,1] représente 101₂ = 5₁₀
  *
  * @param A : Pointeur vers le BigBinary à normaliser
  */
@@ -108,15 +102,6 @@ BigBinary initBigBinary() {
  *
  * RÔLE : Convertit une chaîne de caractères (ex: "1011", "-101") en BigBinary
  *
- * GESTION :
- *   - Espaces/tabulations/retours à la ligne sont ignorés
- *   - Signe '+' ou '-' au début est accepté
- *   - Seuls '0' et '1' sont valides comme chiffres
- *
- * EXEMPLES :
- *   "1011"     → [1,0,1,1] = 11₁₀
- *   "  -101  " → [1,0,1] avec Signe=1 = -5₁₀
- *   "00101"    → [1,0,1] = 5₁₀ (normalisé)
  *
  * @param str : Chaîne de caractères représentant le nombre binaire
  * @return : BigBinary correspondant (ou 0 si erreur)
