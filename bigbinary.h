@@ -263,5 +263,14 @@ BigBinary BigBinary_mod(const BigBinary A, const BigBinary B);
  */
 BigBinary BigBinary_expMod(const BigBinary M, const BigBinary exp, const BigBinary mod);
 
+// ================= PHASE 3 : RSA simplifié =================
+
+// Chiffrement RSA : C = M^e mod N
+BigBinary BigBinary_RSA_encrypt(BigBinary message, BigBinary e, BigBinary n);
+
+// Déchiffrement RSA : M = C^d mod N
+BigBinary BigBinary_RSA_decrypt(BigBinary cipher, BigBinary d, BigBinary n);
+
+
 #endif // BIGBINARY_H
 

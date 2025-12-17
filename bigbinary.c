@@ -1039,3 +1039,26 @@ BigBinary BigBinary_expMod(const BigBinary M, const BigBinary exp, const BigBina
     return result;
 }
 
+/* ===========================================================
+ *  Phase 3 — RSA simplifié
+ * =========================================================== */
+
+/*
+ * Chiffrement RSA
+ * C = M^e mod N
+ * On réutilise directement l'exponentiation modulaire rapide
+ */
+BigBinary BigBinary_RSA_encrypt(BigBinary message, BigBinary e, BigBinary n) {
+    return BigBinary_expMod(message, e, n);
+}
+
+/*
+ * Déchiffrement RSA
+ * M = C^d mod N
+ * Même principe que le chiffrement
+ */
+BigBinary BigBinary_RSA_decrypt(BigBinary cipher, BigBinary d, BigBinary n) {
+    return BigBinary_expMod(cipher, d, n);
+}
+
+
