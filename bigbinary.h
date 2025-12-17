@@ -264,3 +264,4 @@ BigBinary BigBinary_mod(const BigBinary A, const BigBinary B);
 BigBinary BigBinary_expMod(const BigBinary M, const BigBinary exp, const BigBinary mod);
 
 #endif // BIGBINARY_H
+
