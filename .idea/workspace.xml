@@ -28,16 +28,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e7417300-86be-441b-9823-5fe381d4b757" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/projet C.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bigbinary.c" beforeDir="false" afterPath="$PROJECT_DIR$/bigbinary.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bigbinary.h" beforeDir="false" afterPath="$PROJECT_DIR$/bigbinary.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.c" beforeDir="false" afterPath="$PROJECT_DIR$/main.c" afterDir="false" />
-    </list>
+    <list default="true" id="e7417300-86be-441b-9823-5fe381d4b757" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -109,7 +100,7 @@
       <updated>1759994407386</updated>
       <workItem from="1759994408866" duration="5994000" />
       <workItem from="1761912341796" duration="2239000" />
-      <workItem from="1768400504697" duration="7766000" />
+      <workItem from="1768400504697" duration="8064000" />
     </task>
     <servers />
   </component>
