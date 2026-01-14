@@ -271,6 +271,18 @@ BigBinary BigBinary_RSA_encrypt(BigBinary message, BigBinary e, BigBinary n);
 // Déchiffrement RSA : M = C^d mod N
 BigBinary BigBinary_RSA_decrypt(BigBinary cipher, BigBinary d, BigBinary n);
 
+/**
+ * multiplicationEgyptienne() : Multiplie deux BigBinary
+ *
+ * Algorithme ancien basé sur décalages et additions,
+ * parfaitement adapté aux grands entiers binaires.
+ *
+ * Paramètres : A et B
+ * Retour : A × B
+ */
+BigBinary multiplicationEgyptienne(const BigBinary A, const BigBinary B);
+
+
 
 #endif // BIGBINARY_H
 

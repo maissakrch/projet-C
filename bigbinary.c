@@ -746,6 +746,58 @@ BigBinary pgcdBinaire(const BigBinary A, const BigBinary B) {
     return G;
 }
 
+/* ===========================================================
+ *  Multiplication Égyptienne
+ * =========================================================== */
+
+/**
+ * multiplicationEgyptienne - Multiplie deux BigBinary
+ *
+ * Algorithme :
+ *   Tant que B != 0 :
+ *     - si B est impair : R = R + A
+ *     - A = A << 1
+ *     - B = B >> 1
+ *
+ * Adapté aux grands entiers binaires (BigBinary)
+ *
+ * @param A, B : BigBinary non signés
+ * @return : A × B
+ */
+BigBinary multiplicationEgyptienne(const BigBinary A, const BigBinary B) {
+
+    BigBinary R = initBigBinary();        // Résultat = 0
+    BigBinary a = copieBigBinary(A);
+    BigBinary b = copieBigBinary(B);
+
+    while (!estZero(b)) {
+
+        // Si b est impair, on ajoute a au résultat
+        if (!estPair(b)) {
+            BigBinary tmp = additionBigBinary(R, a);
+            libereBigBinary(&R);
+            R = tmp;
+        }
+
+        // a = a × 2
+        BigBinary a2 = decaleGauche(a, 1);
+        libereBigBinary(&a);
+        a = a2;
+
+        // b = b ÷ 2
+        BigBinary b2 = decaleDroite(b, 1);
+        libereBigBinary(&b);
+        b = b2;
+    }
+
+    libereBigBinary(&a);
+    libereBigBinary(&b);
+
+    normalizeBigBinary(&R);
+    return R;
+}
+
+
 /**
  * BigBinary_mod - Calcule A modulo B (A mod B)
  *
