@@ -16,14 +16,14 @@
  * bien plus grands que les types natifs (int, long, etc.)
  */
 typedef struct {
-    int *Tdigits;  // 📌 Tableau dynamique de bits (0 ou 1)
+    int *Tdigits;  //    Tableau dynamique de bits (0 ou 1)
                    //    Exemple : 1011 sera stocké comme [1, 0, 1, 1]
                    //    MSB-first = Most Significant Bit en premier (poids fort à gauche)
 
-    int Taille;    // 📌 Nombre de bits dans le tableau
+    int Taille;    //    Nombre de bits dans le tableau
                    //    Exemple : pour 1011, Taille = 4
 
-    int Signe;     // 📌 Signe du nombre :
+    int Signe;     //    Signe du nombre :
                    //    - 0 = positif
                    //    - 1 = négatif
                    //    (En Phase 1, on travaille uniquement avec des nombres non signés)
@@ -68,7 +68,7 @@ void afficheBigBinary(const BigBinary A);
 /**
  * libereBigBinary() : Libère la mémoire allouée pour un BigBinary
  *
- * ⚠️ IMPORTANT : TOUJOURS appeler cette fonction quand vous n'avez plus besoin
+ * IMPORTANT : TOUJOURS appeler cette fonction quand vous n'avez plus besoin
  *    d'un BigBinary, sinon vous aurez des fuites mémoire (memory leaks)
  *
  * Paramètre : A = pointeur vers le BigBinary à libérer
@@ -161,7 +161,7 @@ int estPair(const BigBinary A);
  * Paramètre : A = le nombre à copier
  * Retour : Un nouveau BigBinary identique à A (mais indépendant en mémoire)
  *
- * ⚠️ IMPORTANT : La copie doit être libérée séparément avec libereBigBinary()
+ * IMPORTANT : La copie doit être libérée séparément avec libereBigBinary()
  */
 BigBinary copieBigBinary(const BigBinary A);
 
@@ -232,7 +232,7 @@ BigBinary pgcdBinaire(const BigBinary A, const BigBinary B);
 /**
  * BigBinary_mod() : Calcule A modulo B (reste de la division)
  *
- * ⚠️ PRÉCONDITION : B > 0 (B ne peut pas être nul)
+ * PRÉCONDITION : B > 0 (B ne peut pas être nul)
  *
  * Paramètres : A et B
  * Retour : A mod B (reste de A ÷ B)
@@ -259,7 +259,7 @@ BigBinary BigBinary_mod(const BigBinary A, const BigBinary B);
  * Exemple :
  *   BigBinary_expMod(5, 3, 13) = (5³) mod 13 = 125 mod 13 = 8
  *
- * ⚠️ LIMITATION : exp doit être ≤ 64 bits (suffisant pour la plupart des applications)
+ * LIMITATION : exp doit être ≤ 64 bits (suffisant pour la plupart des applications)
  */
 BigBinary BigBinary_expMod(const BigBinary M, const BigBinary exp, const BigBinary mod);
 
@@ -285,4 +285,3 @@ BigBinary multiplicationEgyptienne(const BigBinary A, const BigBinary B);
 
 
 #endif // BIGBINARY_H
-
